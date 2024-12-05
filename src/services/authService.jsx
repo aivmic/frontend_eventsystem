@@ -76,7 +76,7 @@ const login = async (username, password) => {
         const { accessToken, refreshToken } = response.data;
 
         setAccessTokenInMemory(accessToken);
-        document.cookie = `RefreshToken=${refreshToken}; Secure; SameSite=None; path=/`;
+        //document.cookie = `RefreshToken=${refreshToken}; Secure; SameSite=None; path=/`;
 
         saveRolesFromToken(accessToken);
 
