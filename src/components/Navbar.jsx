@@ -16,21 +16,28 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
     const handleLogout = async () => {
         try {
             const accessToken = localStorage.getItem('accessToken');
+
+            // Send the logout request first
             await axios.post(`${apiUrl}/logout`, {}, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`  // Send the access token if needed
                 },
-                withCredentials: true
+                withCredentials: true  // Ensure cookies are sent
             });
 
+            // Show success message after the request completes
             setModalMessage('Logout Successful! Redirecting to the main page...');
             setShowSuccessModal(true);
-            localStorage.removeItem('accessToken');
-            document.cookie = 'RefreshToken =; expires = Thu, 01 Jan 1970 00:00:00 GMT';
 
+            // Clear local storage and cookies after logout
+            localStorage.removeItem('accessToken');
+            document.cookie = 'RefreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'; // Make sure to specify the path
+
+            // Additional cleanup
             clearRoles();
             setIsAuthenticated(false);
 
+            // Redirect after 2 seconds
             setTimeout(() => {
                 setShowSuccessModal(false);
                 navigate('/');
@@ -39,6 +46,7 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
             console.error('Logout failed:', error);
         }
     };
+
 
     return (
         <nav className="bg-red-50 text-black p-4 flex justify-between items-center relative">
