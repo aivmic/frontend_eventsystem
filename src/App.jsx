@@ -1,67 +1,32 @@
-// src/App.jsx
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import axiosInstance from './axiosConfig';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import MainPage from './pages/MainPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import InventoryPage from './pages/InventoryPage';
-import ProfilePage from './pages/ProfilePage';
-import { ToastContainer } from 'react-toastify';
+import Home from './pages/MainPage';
+import Login from './pages/LoginPage';
+import Register from './pages/RegisterPage';
+import Profile from './pages/ProfilePage';
+import Inventory from './pages/InventoryPage';
+//import AdminPanel from './pages/AdminPanel';
 import 'react-toastify/dist/ReactToastify.css';
 
-const App = () => {
-    const [user, setUser] = useState(null);
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         try {
-    //             const response = await axiosInstance.get('/auth/me'); // Adjust endpoint as needed
-    //             setUser(response.data);
-    //         } catch (error) {
-    //             setUser(null);
-    //         }
-    //     };
-
-    //     fetchUser();
-    // }, []);
-
-    const handleLogout = () => {
-        Cookies.remove('jwtToken');
-        setUser(null);
-        window.location.href = '/login';
-    };
+function App() {
+    // Determine if the user is authenticated
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('accessToken'));
 
     return (
         <Router>
-            <div>
-                <Navbar isAuthenticated={!!user} isAdmin={user?.role === 'admin'} />
-                <ToastContainer />
-                <Routes>
-                    <Route path="/" element={<MainPage />} />
-                    <Route
-                        path="/login"
-                        element={!user ? <LoginPage /> : <Navigate to="/" />}
-                    />
-                    <Route
-                        path="/register"
-                        element={!user ? <RegisterPage /> : <Navigate to="/" />}
-                    />
-                    <Route
-                        path="/inventory"
-                        element={user ? <InventoryPage /> : <Navigate to="/login" />}
-                    />
-                    <Route
-                        path="/profile"
-                        element={user ? <ProfilePage user={user} /> : <Navigate to="/login" />}
-                    />
-                    {/* Admin routes can be protected similarly */}
-                </Routes>
-            </div>
+            {/* Pass isAuthenticated and setIsAuthenticated to Navbar */}
+            <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/inventory" element={<Inventory />} />
+                {/* <Route path="/admin" element={<AdminPanel />} /> */}
+            </Routes>
         </Router>
     );
-};
+}
 
 export default App;

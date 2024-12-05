@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../index.css';
-import Navbar from '../components/Navbar';
+// import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
 import EventCard from '../components/EventCard';
 import axios from 'axios';
