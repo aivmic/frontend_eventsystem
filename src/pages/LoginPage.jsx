@@ -1,9 +1,8 @@
-// src/pages/LoginPage.jsx
 import React, { useState, useEffect } from 'react';
 import '../index.css';
 import { useNavigate } from 'react-router-dom';
-import SuccessModal from '../components/SuccessModal'; // Import the SuccessModal component
-import { login, setupAxiosInterceptors } from '../services/authService'; // Import the service
+import SuccessModal from '../components/SuccessModal';
+import { login, setupAxiosInterceptors } from '../services/authService';
 
 const LoginPage = ({ setIsAuthenticated }) => {
     const [formData, setFormData] = useState({ UserName: '', Password: '' });
@@ -13,7 +12,6 @@ const LoginPage = ({ setIsAuthenticated }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Set up Axios interceptors when the component mounts
         setupAxiosInterceptors();
     }, []);
 
@@ -24,12 +22,10 @@ const LoginPage = ({ setIsAuthenticated }) => {
         try {
             await login(formData.UserName, formData.Password);
 
-            // Show success modal with a custom message
             setModalMessage('Login Successful! Redirecting to the main page...');
             setShowSuccessModal(true);
             setIsAuthenticated(true);
 
-            // Redirect to main page after a short delay
             setTimeout(() => {
                 setShowSuccessModal(false);
                 navigate('/');

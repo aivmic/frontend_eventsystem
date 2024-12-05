@@ -1,41 +1,70 @@
-// src/pages/InventoryPage.jsx
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import SearchBar from '../components/SearchBar';
-import '../index.css';
 import axios from 'axios';
+import EventCard from '../components/EventInventoryCard';
+import CreateEventForm from '../components/CreateEventForm';
 
 const InventoryPage = () => {
     const [events, setEvents] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [userId, setUserId] = useState('');
+    const [showCreateEventForm, setShowCreateEventForm] = useState(false);
 
     useEffect(() => {
-        axios.get('/api/events/mine')
-            .then(response => setEvents(response.data))
-            .catch(err => console.error(err));
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const token = localStorage.getItem('accessToken');
+
+        axios.get(`${apiUrl}/events/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then((response) => {
+                setEvents(response.data);
+            })
+            .catch((err) => console.error('Error fetching events:', err));
+
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        setUserId(decodedToken.sub);
     }, []);
 
-    const filteredEvents = events.filter(event =>
-        event.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleEventDeleted = (eventId) => {
+        setEvents((prevEvents) => prevEvents.filter(event => event.id !== eventId));
+    };
+
+    const handleCreateEvent = (newEvent) => {
+        setEvents((prevEvents) => [...prevEvents, newEvent]);
+        setShowCreateEventForm(false);
+    };
+
+    const handleGoBack = () => {
+        setShowCreateEventForm(false);
+    };
 
     return (
-        <div>
-            {/* <Navbar isAuthenticated={true} /> */}
-            <div className="container mx-auto mt-4">
-                <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                    {filteredEvents.map(event => (
-                        <div key={event.id} className="p-4 bg-gray-100 rounded shadow">
-                            <h3 className="text-lg font-bold">{event.title}</h3>
-                            <p>{event.description}</p>
-                            <button className="bg-red-500 text-white mt-2 px-4 py-1 rounded">
-                                Delete
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
+        <div className="container mx-auto">
+            <h1 className="text-2xl">My Events</h1>
+            {!showCreateEventForm ? (
+                <>
+                    <button
+                        onClick={() => setShowCreateEventForm(true)}
+                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                        Create New Event
+                    </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                        {events.map(event => (
+                            <EventCard
+                                key={event.id}
+                                event={event}
+                                userId={userId}
+                                onEventDeleted={handleEventDeleted}
+                            />
+                        ))}
+                    </div>
+                </>
+            ) : (
+                <CreateEventForm
+                    onCreateEvent={handleCreateEvent}
+                    onGoBack={handleGoBack}
+                />
+            )}
         </div>
     );
 };

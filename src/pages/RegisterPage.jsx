@@ -1,29 +1,41 @@
 import React, { useState } from 'react';
 import '../index.css';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+import SuccessModal from '../components/SuccessModal';
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({ UserName: '', Email: '', Password: '' });
-    const [errors, setErrors] = useState([]); // To capture and display errors
+    const [errors, setErrors] = useState([]);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [isRedirected, setIsRedirected] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const apiUrl = process.env.REACT_APP_API_URL;
 
         try {
-            const response = await axios.post(`${apiUrl}/accounts`, formData);
-            alert('Registration successful!');
-            setErrors([]); // Clear previous errors on success
+            await axios.post(`${apiUrl}/accounts`, formData);
+            setErrors([]);
+            setShowSuccessModal(true);
         } catch (error) {
             if (error.response && error.response.status === 422 && Array.isArray(error.response.data.errors)) {
-                // If backend returns validation errors as an array
                 setErrors(error.response.data.errors);
             } else {
-                // Handle other cases (e.g., network errors, unexpected errors)
+
                 setErrors(['An unexpected error occurred. Please try again later.']);
             }
         }
     };
+
+    const closeModal = () => {
+        setShowSuccessModal(false);
+        setIsRedirected(true);
+    };
+
+    if (isRedirected) {
+        return <Navigate to="/login" />;
+    }
 
     return (
         <div className="container mx-auto mt-8">
@@ -69,8 +81,15 @@ const RegisterPage = () => {
                     Register
                 </button>
             </form>
+
+            {/* Conditionally render SuccessModal */}
+            {showSuccessModal && (
+                <SuccessModal
+                    message="Registration successful! You can now log in."
+                    onClose={closeModal}
+                />
+            )}
         </div>
     );
 };
-
 export default RegisterPage;
