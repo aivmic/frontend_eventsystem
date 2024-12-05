@@ -15,12 +15,18 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
 
     const handleLogout = async () => {
         try {
-            await axios.post(`${apiUrl}/logout`, {}, { withCredentials: true });
+            const accessToken = localStorage.getItem('accessToken');
+            await axios.post(`${apiUrl}/logout`, {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`  // Send the access token if needed
+                },
+                withCredentials: true
+            });
 
             setModalMessage('Logout Successful! Redirecting to the main page...');
             setShowSuccessModal(true);
             localStorage.removeItem('accessToken');
-            //document.cookie = 'RefreshToken =; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+            document.cookie = 'RefreshToken =; expires = Thu, 01 Jan 1970 00:00:00 GMT';
 
             clearRoles();
             setIsAuthenticated(false);
