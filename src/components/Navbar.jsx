@@ -20,6 +20,8 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
             setModalMessage('Logout Successful! Redirecting to the main page...');
             setShowSuccessModal(true);
             localStorage.removeItem('accessToken');
+            //document.cookie = 'RefreshToken =; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+
             clearRoles();
             setIsAuthenticated(false);
 
@@ -27,8 +29,6 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
                 setShowSuccessModal(false);
                 navigate('/');
             }, 2000);
-
-            navigate('/');
         } catch (error) {
             console.error('Logout failed:', error);
         }

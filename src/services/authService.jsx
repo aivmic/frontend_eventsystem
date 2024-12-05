@@ -89,7 +89,7 @@ const login = async (username, password) => {
 
 const logout = () => {
     localStorage.removeItem('accessToken');
-    document.cookie = 'RefreshToken =; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+    //document.cookie = 'RefreshToken =; expires = Thu, 01 Jan 1970 00:00:00 GMT';
 
     clearRoles();
 };
