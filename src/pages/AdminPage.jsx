@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 
-const AdminPage = () => {
+const AdminPage = (isAuthenticated) => {
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [newCategoryName, setNewCategoryName] = useState('');
@@ -16,6 +16,11 @@ const AdminPage = () => {
 
     useEffect(() => {
         const apiUrl = process.env.REACT_APP_API_URL;
+
+        //check if user is authenticated
+        if (!isAuthenticated) {
+            return <Navigate to="/" />;
+        }
 
         const fetchEvents = axios.get(`${apiUrl}/events`, { params: { searchTerm } });
 

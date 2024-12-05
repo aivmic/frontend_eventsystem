@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EventCard from '../components/EventInventoryCard';
 import CreateEventForm from '../components/CreateEventForm';
+import { Navigate } from 'react-router-dom';
 
-const InventoryPage = () => {
+const InventoryPage = (isAuthenticated) => {
     const [events, setEvents] = useState([]);
     const [userId, setUserId] = useState('');
     const [showCreateEventForm, setShowCreateEventForm] = useState(false);
 
     useEffect(() => {
+        //check if user is authenticated
+        if (!isAuthenticated) {
+            return <Navigate to="/" />;
+        }
+
         const apiUrl = process.env.REACT_APP_API_URL;
         const token = localStorage.getItem('accessToken');
 
