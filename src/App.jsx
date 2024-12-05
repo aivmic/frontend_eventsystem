@@ -20,9 +20,9 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
                 <Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} />
-                <Route path="/inventory" element={<Inventory />} />
-                <Route path="/events/edit/:eventId" element={<EditEventPage />} />
-                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/inventory" element={<Inventory setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/events/edit/:eventId" element={<EditEventPage setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/admin" element={<AdminPage setIsAuthenticated={setIsAuthenticated} />} />
             </Routes>
         </Router>
     );

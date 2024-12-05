@@ -73,21 +73,12 @@ const setupAxiosInterceptors = () => {
 const login = async (username, password) => {
     try {
         const response = await axios.post(`${apiUrl}/login`, { UserName: username, Password: password }, { withCredentials: true });
-
         const { accessToken, refreshToken } = response.data;
 
         setAccessTokenInMemory(accessToken);
+        document.cookie = `RefreshToken=${refreshToken}; Secure; SameSite=None; path=/`;
+
         saveRolesFromToken(accessToken);
-
-        // Extract the Set-Cookie headers from the response
-        const cookies = response.headers['set-cookie'];
-
-        if (cookies) {
-            // Loop through each cookie and save it in document.cookie
-            cookies.forEach(cookie => {
-                document.cookie = cookie;
-            });
-        }
 
         return response.data;
     } catch (error) {
@@ -95,7 +86,6 @@ const login = async (username, password) => {
         throw error;
     }
 };
-
 
 const logout = () => {
     localStorage.removeItem('accessToken');
